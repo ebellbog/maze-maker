@@ -285,3 +285,12 @@ body {
   background-size: 80px 80px;
 }
 
+.embedded #page-background {
+  background-image: none;
+  background-color: transparent;
+}
+.embedded #toolbar,
+.embedded #github-link {
+  display: none;
+}
+

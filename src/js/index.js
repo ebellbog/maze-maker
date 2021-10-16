@@ -1,5 +1,7 @@
 import '../less/demo.less';
 import '../less/demo-mobile.less';
+import '../less/demo-embedded.less';
+
 import MazeDemoPage from './MazeDemoPage.js';
 import {initUtils} from './utils.js';
 

@@ -1,8 +1,8 @@
-import {randInt, getDeviceType} from './utils.js';
-import GitHubLogo from '../../static/img/GitHub-Mark-Light-64px.png';
 import Maze from './Maze.js';
-import Wall from './Wall.js'
+import {randInt, getDeviceType} from './utils.js';
 import {WallState} from './Wall.js'
+
+import GitHubLogo from '../../static/img/GitHub-Mark-Light-64px.png';
 
 const DISTANCE_MAP_ANIMATION_SPEED = 40; // Delay (in milliseconds) between distance steps.
 const ANIMATION_SPEED = 40; // Delay (in milliseconds) between cell visits.
@@ -36,13 +36,14 @@ function getColorForNormalizedDistance(distance) {
 
 class MazeDemoPage {
     constructor() {
-        this.updateRanges();
-        this.randomizeDimensions();
-
         this.maze = null;
 
         this.isMobile = null;
         this.isLandscape =  null;
+
+        const queryParams = new URLSearchParams(window.location.search);
+        this.isEmbedded = Boolean(parseInt(queryParams.get('embedded'))) || (window !== window.top);
+        $('body').toggleClass('embedded', this.isEmbedded);
 
         this.currentMode = InteractionMode.DISTANCE_MAP;
         this.isAnimating = false;
@@ -67,6 +68,9 @@ class MazeDemoPage {
         this.toolbar$ = $('#toolbar');
 
         $('#github-link').css('background-image', `url(./dist/${GitHubLogo})`);
+
+        this.updateRanges();
+        this.randomizeDimensions();
 
         this.hookEvents();
     }
@@ -261,9 +265,10 @@ class MazeDemoPage {
 
         $('body').toggleClass('mobile', getDeviceType() && screenAspect > 1);
 
+        const screenPercent = (this.isEmbedded) ? 98 : 80;
         this.mazeBg$.css({
-            width: screenAspect > mazeAspect ? '80vw' : formatHeight(80/mazeAspect),
-            height: mazeAspect >= screenAspect ? formatHeight(80) : `${80*mazeAspect}vw`
+            width: screenAspect > mazeAspect ? `${screenPercent}vw` : formatHeight(screenPercent/mazeAspect),
+            height: mazeAspect >= screenAspect ? formatHeight(screenPercent) : `${screenPercent*mazeAspect}vw`
         });
 
         const defaultCell$ = this.maze$.find('.cell').first();
@@ -366,6 +371,10 @@ class MazeDemoPage {
 
         this.maze.generateMaze();
         this.renderMaze(false);
+
+        if (this.isEmbedded) {
+            this.startAnimating();
+        }
     }
 
     startAnimating() {
