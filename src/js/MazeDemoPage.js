@@ -212,11 +212,13 @@ class MazeDemoPage {
     }
 
     updateRanges() {
+        const {innerWidth, innerHeight} = window;
+        const isLandscape = innerWidth > innerHeight;
+
         const isMobile = getDeviceType()
-        const isLandscape = window.innerWidth > window.innerHeight;
         const hasChanged = (isMobile !== this.isMobile || (isMobile && isLandscape !== this.isLandscape));
 
-        if (!hasChanged) return;
+        if (!hasChanged && !this.isEmbedded) return;
 
         if (isMobile) {
             if (isLandscape) {
@@ -235,6 +237,12 @@ class MazeDemoPage {
             this.maxRandRows = MAX_RANDOM;
             this.minRandCols = MIN_RANDOM;
             this.maxRandCols = MAX_RANDOM;
+        }
+
+        // Set minimum cell size for embedded views, to prevent visual glitches in iframes
+        if (this.isEmbedded) {
+            this.maxRandRows = Math.min(this.maxRandRows, Math.floor(innerHeight / 45));
+            this.maxRandCols = Math.min(this.maxRandCols, Math.floor(innerWidth / 45));
         }
 
         // Restart animation if ranges change.
@@ -265,7 +273,7 @@ class MazeDemoPage {
 
         $('body').toggleClass('mobile', getDeviceType() && screenAspect > 1);
 
-        const screenPercent = (this.isEmbedded) ? 98 : 80;
+        const screenPercent = (this.isEmbedded) ? 90 : 80;
         this.mazeBg$.css({
             width: screenAspect > mazeAspect ? `${screenPercent}vw` : formatHeight(screenPercent/mazeAspect),
             height: mazeAspect >= screenAspect ? formatHeight(screenPercent) : `${screenPercent*mazeAspect}vw`
