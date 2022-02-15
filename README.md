@@ -1,2 +1,2 @@
-# mazer-3d
-An homage to the Mac Classic game
+# MazeMaker
+An interactive algorithm for procedurally generating mazes, coded from scratch in collaboration with Rye Welz Geselowitz.
